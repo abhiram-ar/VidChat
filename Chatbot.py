@@ -17,16 +17,17 @@ from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 
 
-
 os.environ['OPENAI_API_KEY'] = "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" #college mail
 os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
-
 
 
 st.set_page_config(page_title="VidChat", page_icon=":books:")
 #st.header("VidChat :books:")
 
-
+#if error remove comment
+#llm = OpenAI(temperature=0)
+#tools = load_tools(['serpapi'])
+#agent = initialize_agent(tools, llm, agent='zero-shot-react-description')
 
 model = whisper.load_model("base")  #its better to move this out of her for speed startup
 #model.device
@@ -34,6 +35,8 @@ model = whisper.load_model("base")  #its better to move this out of her for spee
 #while GPU infrence takes only 60s
 #screenshots availaable in windows
 
+if "chatmodel" not in st.session_state:
+   st.session_state.chatmodel = None
 
 with st.sidebar:
     st.subheader("Data Center")
@@ -127,14 +130,14 @@ for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 if prompt := st.chat_input(placeholder = "Ask something about the article" ,disabled= not yt_link):
-    if not openai_api_key:
+    if not os.environ['OPENAI_API_KEY']:
         st.info("Key Error")
         st.stop()
 
-    client = OpenAI(api_key=openai_api_key)
+    #client = OpenAI(api_key=openai_api_key)
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
-    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.messages)
-    msg = response.choices[0].message.content
-    st.session_state.messages.append({"role": "assistant", "content": msg})
-    st.chat_message("assistant").write(msg)
+    response = st.session_state.chatmodel.run(prompt)
+    #msg = response.choices[0].message.content
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)
