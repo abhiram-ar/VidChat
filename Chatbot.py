@@ -2,7 +2,6 @@ import streamlit as st
 import whisper
 from pytube import YouTube
 
-
 from langchain.llms import OpenAI
 import os
 
@@ -30,13 +29,22 @@ st.set_page_config(page_title="VidChat", page_icon=":books:")
 #agent = initialize_agent(tools, llm, agent='zero-shot-react-description')
 
 model = whisper.load_model("base")  #its better to move this out of her for speed startup
-#model.device
+model.device
 #CPU takes 10minutes to infrecnce
 #while GPU infrence takes only 60s
 #screenshots availaable in windows
 
 if "chatmodel" not in st.session_state:
    st.session_state.chatmodel = None
+ 
+if "title" not in st.session_state:
+   st.session_state.title = "Nill"
+
+if "authur" not in st.session_state:
+   st.session_state.authur = None
+  
+if "img" not in st.session_state:
+   st.session_state.img = None
 
 with st.sidebar:
     st.subheader("Data Center")
@@ -66,8 +74,8 @@ with st.sidebar:
           print(transcript)
 
           #mining metadata
-          authur = yt.author
-          title = yt.title
+          st.session_state.authur = yt.author
+          st.session_state.title = yt.title
           thumbnail_link = yt.thumbnail_url
 
         else:
@@ -86,15 +94,15 @@ with st.sidebar:
           #  'length': 1374, 
           #  'author': 'TODAY'}
         
-          title = documents[0].metadata['title']
-          authur = documents[0].metadata['author']
+          st.session_state.title = documents[0].metadata['title']
+          st.session_state.authur = documents[0].metadata['author']
           thumbnail_link = documents[0].metadata['thumbnail_url']
 
 
         #st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
-        st.image(thumbnail_link)
-        st.write( title)
-        st.write("Uploaded by : " +authur)
+        st.session_state.img = st.image(thumbnail_link)
+        st.write(st.session_state.title)
+        st.write("Uploaded by : " + st.session_state.authur)
 
         #converting documents to chunks
         text_spliter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
@@ -111,22 +119,23 @@ with st.sidebar:
            chain_type="stuff",
            retriever=vectordb.as_retriever(),
         )
-        
         st.write(st.session_state.chatmodel.run("write a summary"))
 
+    if (st.button("Reset Chat")):
+      st.session_state.chatmodel = None
+      st.session_state.chat_message = None
 
 
-    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
-
+    "[Open Video](ytlink)"
 
 
 st.title("💬 VidChat")
+
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "Enter the Video link to continue."}]
 
 for msg in st.session_state.messages:
-    #st.chat_message(msg["role"]).write(msg["content"])
     st.chat_message(msg["role"]).write(msg["content"])
 
 if prompt := st.chat_input(placeholder = "Ask something about the article" ,disabled= not yt_link):
