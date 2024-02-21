@@ -2,19 +2,24 @@ import streamlit as st
 import whisper
 from pytube import YouTube
 
-from langchain.agents import load_tools
-from langchain.agents import initialize_agent
+
 from langchain.llms import OpenAI
 import os
 
 from langchain.document_loaders import YoutubeLoader
 
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
+from langchain.chains import RetrievalQA
+from langchain.llms import OpenAI
+
+
+
 os.environ['OPENAI_API_KEY'] = "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" #college mail
 os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
-
-llm = OpenAI(temperature=0)
-tools = load_tools(['serpapi'])
-agent = initialize_agent(tools, llm, agent='zero-shot-react-description')
 
 
 
@@ -28,10 +33,6 @@ model = whisper.load_model("base")  #its better to move this out of her for spee
 #CPU takes 10minutes to infrecnce
 #while GPU infrence takes only 60s
 #screenshots availaable in windows
-#fecting the audio
-
-
-
 
 
 with st.sidebar:
@@ -52,14 +53,14 @@ with st.sidebar:
           st.error("invalid link")
           st.stop()
 
-
         #create the txt doc
         if(method == "Audio"):
           yt = YouTube(yt_link)
           audio = yt.streams.filter(only_audio=True).first()
           a = audio.download()  #path to file - sting class
-          result = "text corpus"
-          #result = model.transcribe(a)
+          transcript = "text corpus"
+          transcript = model.transcribe(a)['text']
+          print(transcript)
 
           #mining metadata
           authur = yt.author
@@ -92,13 +93,31 @@ with st.sidebar:
         st.write( title)
         st.write("Uploaded by : " +authur)
 
+        #converting documents to chunks
+        text_spliter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+        splits = text_spliter.split_text(transcript)
+
+        #build vector store
+        embeddings = OpenAIEmbeddings()
+        vectordb = FAISS.from_texts(splits,embeddings)
+
+        #building a QA chian
+        #making sure the model dont reload on session refresh
+        st.session_state.chatmodel = RetrievalQA.from_chain_type(
+           llm= OpenAI(temperature=0),
+           chain_type="stuff",
+           retriever=vectordb.as_retriever(),
+        )
+        
+        st.write(st.session_state.chatmodel.run("write a summary"))
+
+
 
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
 
 
 
 st.title("💬 VidChat")
-
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "Enter the Video link to continue."}]
@@ -109,7 +128,7 @@ for msg in st.session_state.messages:
 
 if prompt := st.chat_input(placeholder = "Ask something about the article" ,disabled= not yt_link):
     if not openai_api_key:
-        st.info("Please add your OpenAI API key to continue.")
+        st.info("Key Error")
         st.stop()
 
     client = OpenAI(api_key=openai_api_key)
