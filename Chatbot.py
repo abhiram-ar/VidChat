@@ -64,16 +64,27 @@ with st.sidebar:
           #mining metadata
           authur = yt.author
           title = yt.title
+          thumbnail_link = yt.thumbnail_url
 
         else:
           url = yt_link
           loader = YoutubeLoader.from_youtube_url(url, add_video_info = True)
           documents = loader.load()
           transcript = " ".join([doc.page_content for doc in documents])
-
+          
+          #metadata object
+          #  'source': 'fhgPzcJbyls', 
+          #  'title': 'Full interview: Nikki Haley tells NBC News Trump is ‘not qualified to be president’', 
+          #  'description': 'Unknown',
+          #  'view_count': 40716, 
+          #  'thumbnail_url': 'https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg', 
+          #  'publish_date': '2024-02-14 00:00:00', 
+          #  'length': 1374, 
+          #  'author': 'TODAY'}
+        
           title = documents[0].metadata['title']
           authur = documents[0].metadata['author']
-          #thumbnail_link = documents[0].metadata['thumbnail']
+          thumbnail_link = documents[0].metadata['thumbnail_url']
 
 
         #st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
