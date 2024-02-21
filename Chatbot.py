@@ -2,6 +2,20 @@ import streamlit as st
 import whisper
 from pytube import YouTube
 
+from langchain.agents import load_tools
+from langchain.agents import initialize_agent
+from langchain.llms import OpenAI
+import os
+
+from langchain.document_loaders import YoutubeLoader
+
+#os.environ['OPENAI_API_KEY'] = "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" #college mail
+os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
+
+llm = OpenAI(temperature=0)
+tools = load_tools(['serpapi'])
+agent = initialize_agent(tools, llm, agent='zero-shot-react-description')
+
 
 
 st.set_page_config(page_title="VidChat", page_icon=":books:")
@@ -26,9 +40,7 @@ with st.sidebar:
     #link input and validation
     yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
 
-    
-
-    option = st.selectbox('Processing Method',('Captions', 'Audio'))
+    method = st.selectbox('Processing Method',('Captions', 'Audio'))
 
     if (st.button("process")):
       #implementing the spinner
@@ -40,38 +52,48 @@ with st.sidebar:
           st.error("invalid link")
           st.stop()
 
-        #create the txt doc
-        yt = YouTube(yt_link)
-        audio = yt.streams.filter(only_audio=True).first()
-        a = audio.download()  #link to file sting class
-        result = "text corpus"
-        #result = model.transcribe(a)
 
-        #mining metadata
-        authur = yt.author
-        title = yt.title
+        #create the txt doc
+        if(method == "Audio"):
+          yt = YouTube(yt_link)
+          audio = yt.streams.filter(only_audio=True).first()
+          a = audio.download()  #path to file - sting class
+          result = "text corpus"
+          #result = model.transcribe(a)
+
+          #mining metadata
+          authur = yt.author
+          title = yt.title
+
+        else:
+          url = yt_link
+          loader = YoutubeLoader.from_youtube_url(url, add_video_info = True)
+          documents = loader.load()
+          transcript = " ".join([doc.page_content for doc in documents])
+
+          title = documents[0].metadata['title']
+          authur = documents[0].metadata['author']
 
         st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
-        st.write(title)
-        st.write(authur)
-
-
-
-
-
+        st.write( title)
+        st.write("Uploaded by : " +authur)
 
 
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
 
+
+
 st.title("💬 VidChat")
+
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "Enter the Video link to continue."}]
 
 for msg in st.session_state.messages:
+    #st.chat_message(msg["role"]).write(msg["content"])
     st.chat_message(msg["role"]).write(msg["content"])
 
-if prompt := st.chat_input():
+if prompt := st.chat_input(placeholder = "Ask something about the article" ,disabled= not yt_link):
     if not openai_api_key:
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
