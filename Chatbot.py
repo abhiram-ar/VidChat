@@ -28,8 +28,9 @@ st.set_page_config(page_title="VidChat", page_icon=":books:")
 #tools = load_tools(['serpapi'])
 #agent = initialize_agent(tools, llm, agent='zero-shot-react-description')
 
+
 model = whisper.load_model("base")  #its better to move this out of her for speed startup
-model.device
+
 #CPU takes 10minutes to infrecnce
 #while GPU infrence takes only 60s
 #screenshots availaable in windows
@@ -51,6 +52,7 @@ with st.sidebar:
 
     #link input and validation
     yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
+    model.device
 
     method = st.selectbox('Processing Method',('Captions', 'Audio'))
 
