@@ -1,29 +1,72 @@
 import streamlit as st
+import whisper
+from pytube import YouTube
+
+
 
 st.set_page_config(page_title="VidChat", page_icon=":books:")
-st.header("VidChat :books:")
+#st.header("VidChat :books:")
 
-st.text_input("ask your question")
+
+
+model = whisper.load_model("base")  #its better to move this out of her for speed startup
+#model.device
+#CPU takes 10minutes to infrecnce
+#while GPU infrence takes only 60s
+#screenshots availaable in windows
+#fecting the audio
 
 
 
 
 
 with st.sidebar:
-    st.subheader("your documeent")
-    st.file_uploader("upload pdf here and click on process")
-    st.button("proceess")
+    st.subheader("Data Center")
 
-    yt_link = st.text_input("Enter Video Link", key="video_link", type="default")
+    #link input and validation
+    yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
+
+    
+
+    option = st.selectbox('Processing Method',('Captions', 'Audio'))
+
+    if (st.button("process")):
+      #implementing the spinner
+      with st.spinner("Processing"):
+
+        if("youtube.com" not in yt_link):
+          #do regix match for validity of link
+          #re = http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?
+          st.error("invalid link")
+          st.stop()
+
+        #create the txt doc
+        yt = YouTube(yt_link)
+        audio = yt.streams.filter(only_audio=True).first()
+        a = audio.download()  #link to file sting class
+        result = "text corpus"
+        #result = model.transcribe(a)
+
+        #mining metadata
+        authur = yt.author
+        title = yt.title
+
+        st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
+        st.write(title)
+        st.write(authur)
+
+
+
+
+
+
+
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
-    "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
-    "[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)"
-    st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
 
-st.title("💬 Chatbot")
+st.title("💬 VidChat")
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+    st.session_state["messages"] = [{"role": "assistant", "content": "Enter the Video link to continue."}]
 
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
