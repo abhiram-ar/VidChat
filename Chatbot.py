@@ -1,6 +1,19 @@
 import streamlit as st
 
+st.set_page_config(page_title="VidChat", page_icon=":books:")
+st.header("VidChat :books:")
+
+st.text_input("ask your question")
+
+
+
+
+
 with st.sidebar:
+    st.subheader("your documeent")
+    st.file_uploader("upload pdf here and click on process")
+    st.button("proceess")
+
     yt_link = st.text_input("Enter Video Link", key="video_link", type="default")
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
     "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
