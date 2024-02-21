@@ -9,7 +9,7 @@ import os
 
 from langchain.document_loaders import YoutubeLoader
 
-#os.environ['OPENAI_API_KEY'] = "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" #college mail
+os.environ['OPENAI_API_KEY'] = "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" #college mail
 os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
 
 llm = OpenAI(temperature=0)
@@ -73,8 +73,11 @@ with st.sidebar:
 
           title = documents[0].metadata['title']
           authur = documents[0].metadata['author']
+          #thumbnail_link = documents[0].metadata['thumbnail']
 
-        st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
+
+        #st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
+        st.image(thumbnail_link)
         st.write( title)
         st.write("Uploaded by : " +authur)
 
