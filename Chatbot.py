@@ -1,6 +1,7 @@
 import streamlit as st
 import whisper
 from pytube import YouTube
+from dotenv import load_dotenv
 
 from langchain.llms import OpenAI
 import os
@@ -15,8 +16,8 @@ from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 
-
-#os.environ['OPENAI_API_KEY'] = "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" #college mail
+load_dotenv()
+#os.environ['OPENAI_API_KEY'] = "" #college mail
 os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
 
 
