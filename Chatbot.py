@@ -45,8 +45,8 @@ if "title" not in st.session_state:
 if "authur" not in st.session_state:
    st.session_state.authur = None
   
-if "img" not in st.session_state:
-   st.session_state.img = None
+if "thumbnail_link" not in st.session_state:
+   st.session_state.thumbnail_link = "/workspaces/VidChat/logo.png"
 
 with st.sidebar:
     st.subheader("Data Center")
@@ -99,13 +99,14 @@ with st.sidebar:
         
           st.session_state.title = documents[0].metadata['title']
           st.session_state.authur = documents[0].metadata['author']
-          thumbnail_link = documents[0].metadata['thumbnail_url']
+          st.session_state.thumbnail_link = documents[0].metadata['thumbnail_url']
 
 
+        #old video details
         #st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
-        st.session_state.img = st.image(thumbnail_link)
-        st.write(st.session_state.title)
-        st.write("Uploaded by : " + st.session_state.authur)
+        #st.image(st.session_state.thumbnail_link)
+        #st.write(st.session_state.title)
+        #st.write("Uploaded by : " + st.session_state.authur)
 
         #converting documents to chunks
         text_spliter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
@@ -122,14 +123,18 @@ with st.sidebar:
            chain_type="stuff",
            retriever=vectordb.as_retriever(),
         )
-        st.write(st.session_state.chatmodel.run("write a summary"))
+        #st.write(st.session_state.chatmodel.run("write a summary"))
 
     if (st.button("Reset Chat")):
       st.session_state.chatmodel = None
       st.session_state.chat_message = None
 
+    if(st.session_state.thumbnail_link != '/workspaces/VidChat/logo.png'):
+      st.image(st.session_state.thumbnail_link)
+      st.write(st.session_state.title)
+      st.write("Uploaded by : " + str(st.session_state.authur))
 
-    "[Open Video](ytlink)"
+    
 
 
 st.title("💬 VidChat")
