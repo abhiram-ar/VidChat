@@ -8,5 +8,4 @@ streamlit-feedback
 pytube
 google-search-results
 youtube-transcript-api
-chromadb
-pysqlite3-binary
+faiss-cpu
