@@ -137,7 +137,7 @@ with st.sidebar:
     
 
 
-st.title("💬 VidChat")
+st.title("💬 VideoQuest")
 
 
 if "messages" not in st.session_state:
