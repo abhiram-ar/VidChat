@@ -78,6 +78,16 @@ with st.sidebar:
           transcript = model.transcribe(a)['text']
           print(transcript)
 
+          #addding metadata to the text-corpus
+          title = f"Title of the video is '{yt.title}'"
+          uploader = f"This video is uploaded by {yt.author}"
+          published_date = f"This video is uploded on {yt.publish_date} in YYYY-MM-DD HH-MM-SS format"
+
+          transcript += title
+          transcript += uploader
+          transcript +=published_date
+          
+
           #mining metadata
           st.session_state.authur = yt.author
           st.session_state.title = yt.title
@@ -98,6 +108,16 @@ with st.sidebar:
           #  'publish_date': '2024-02-14 00:00:00', 
           #  'length': 1374, 
           #  'author': 'TODAY'}
+
+          #adding metadata to text-corpus
+          title = f"Title of the video is '{documents[0].metadata['title']}'"
+          uploader = f"This video is uploaded by {documents[0].metadata['author']}"
+          published_date = f"This video is uploded on {documents[0].metadata['publish_date']} in YYYY-MM-DD HH-MM-SS format"
+
+          transcript += title
+          transcript += uploader
+          transcript +=published_date
+
         
           st.session_state.title = documents[0].metadata['title']
           st.session_state.authur = documents[0].metadata['author']
