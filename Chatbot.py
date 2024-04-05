@@ -57,7 +57,9 @@ with st.sidebar:
 
     method = st.selectbox('Processing Method',('Captions', 'Audio'))
 
-    if (st.button("process")):
+    col1, col2 = st.columns(2)
+
+    if (col1.button("Process", use_container_width = True)):
       #implementing the spinner
       with st.spinner("Processing"):
 
@@ -125,14 +127,20 @@ with st.sidebar:
         )
         #st.write(st.session_state.chatmodel.run("write a summary"))
 
-    if (st.button("Reset Chat")):
+    if (col2.button("Reset Chat", use_container_width=True)):
       st.session_state.chatmodel = None
       st.session_state.chat_message = None
+    
+    
 
     if(st.session_state.thumbnail_link != '/workspaces/VidChat/logo.png'):
+      st.divider()
       st.image(st.session_state.thumbnail_link)
       st.write(st.session_state.title)
       st.write("Uploaded by : " + str(st.session_state.authur))
+      accuracy_mode = st.checkbox(label="Context Aware (Closed book mode)", value = False)
+
+
 
     
 
@@ -146,7 +154,7 @@ if "messages" not in st.session_state:
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
-if prompt := st.chat_input(placeholder = "Ask something about the article" ,disabled= not yt_link):
+if prompt := st.chat_input(placeholder = "Ask anything about this video" ,disabled= not yt_link):
     if not os.environ['OPENAI_API_KEY']:
         st.info("Key Error")
         st.stop()
@@ -154,7 +162,10 @@ if prompt := st.chat_input(placeholder = "Ask something about the article" ,disa
     #client = OpenAI(api_key=openai_api_key)
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
-    response = st.session_state.chatmodel.run(prompt)
+    if(accuracy_mode == True):
+      response = st.session_state.chatmodel.run(prompt + ", based on this Video only,else say you dont know the answer.")
+    else:
+      response = st.session_state.chatmodel.run(prompt)
     #msg = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.chat_message("assistant").write(response)
