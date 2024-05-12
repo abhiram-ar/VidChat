@@ -91,7 +91,7 @@ with st.sidebar:
           #mining metadata
           st.session_state.authur = yt.author
           st.session_state.title = yt.title
-          thumbnail_link = yt.thumbnail_url
+          st.session_state.thumbnail_link = yt.thumbnail_url
 
         else:
           url = yt_link
@@ -183,7 +183,7 @@ if prompt := st.chat_input(placeholder = "Ask anything about this video" ,disabl
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
     if(accuracy_mode == True):
-      response = st.session_state.chatmodel.run(prompt + ", based on this Video only,else say you dont know the answer.")
+      response = st.session_state.chatmodel.run(prompt + ", based on provided context only,if it is not in the provided context say you dont know the answer.")
     else:
       response = st.session_state.chatmodel.run(prompt)
     #msg = response.choices[0].message.content
