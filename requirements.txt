@@ -9,3 +9,5 @@ pytube
 google-search-results
 youtube-transcript-api
 faiss-cpu
+langchain-community langchain-core
+tiktoken
