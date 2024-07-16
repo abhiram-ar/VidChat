@@ -1,7 +1,5 @@
 import streamlit as st
-import whisper
 from pytube import YouTube
-from dotenv import load_dotenv
 
 from langchain.llms import OpenAI
 import os
@@ -16,7 +14,7 @@ from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 
-load_dotenv()
+
 #os.environ['OPENAI_API_KEY'] = "" #college mail
 os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
 
@@ -24,17 +22,7 @@ os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0b
 st.set_page_config(page_title="VidChat", page_icon=":books:")
 #st.header("VidChat :books:")
 
-#if error remove comment
-#llm = OpenAI(temperature=0)
-#tools = load_tools(['serpapi'])
-#agent = initialize_agent(tools, llm, agent='zero-shot-react-description')
 
-
-model = whisper.load_model("base")  #its better to move this out of her for speed startup
-
-#CPU takes 10minutes to infrecnce
-#while GPU infrence takes only 60s
-#screenshots availaable in windows
 
 if "chatmodel" not in st.session_state:
    st.session_state.chatmodel = None
@@ -53,9 +41,9 @@ with st.sidebar:
 
     #link input and validation
     yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
-    model.device
-
-    method = st.selectbox('Processing Method',('Captions', 'Audio'))
+    apiKey = st.text_input("Enter OpenAI API Key",placeholder="OpenAI API Key",key="apikey", type="default")
+    if apiKey:
+       os.environ['OPENAI_API_KEY'] = apiKey
 
     col1, col2 = st.columns(2)
 
@@ -64,36 +52,11 @@ with st.sidebar:
       with st.spinner("Processing"):
 
         if("youtube.com" not in yt_link):
-          #do regix match for validity of link
-          #re = http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?
           st.error("invalid link")
           st.stop()
 
         #create the txt doc
-        if(method == "Audio"):
-          yt = YouTube(yt_link)
-          audio = yt.streams.filter(only_audio=True).first()
-          a = audio.download()  #path to file - sting class
-          transcript = "text corpus"
-          transcript = model.transcribe(a)['text']
-          print(transcript)
-
-          #addding metadata to the text-corpus
-          title = f"Title of the video is '{yt.title}'"
-          uploader = f"This video is uploaded by {yt.author}"
-          published_date = f"This video is uploded on {yt.publish_date} in YYYY-MM-DD HH-MM-SS format"
-
-          transcript += title
-          transcript += uploader
-          transcript +=published_date
-          
-
-          #mining metadata
-          st.session_state.authur = yt.author
-          st.session_state.title = yt.title
-          st.session_state.thumbnail_link = yt.thumbnail_url
-
-        else:
+        if(True):
           url = yt_link
           loader = YoutubeLoader.from_youtube_url(url, add_video_info = True)
           documents = loader.load()
@@ -108,15 +71,6 @@ with st.sidebar:
           #  'publish_date': '2024-02-14 00:00:00', 
           #  'length': 1374, 
           #  'author': 'TODAY'}
-
-          #adding metadata to text-corpus
-          title = f"Title of the video is '{documents[0].metadata['title']}'"
-          uploader = f"This video is uploaded by {documents[0].metadata['author']}"
-          published_date = f"This video is uploded on {documents[0].metadata['publish_date']} in YYYY-MM-DD HH-MM-SS format"
-
-          transcript += title
-          transcript += uploader
-          transcript +=published_date
 
         
           st.session_state.title = documents[0].metadata['title']
