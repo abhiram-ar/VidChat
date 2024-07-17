@@ -47,7 +47,8 @@ with st.sidebar:
     else:
        os.environ['OPENAI_API_KEY'] = apiKey
 
-    col1, col2 = st.columns(2)
+    
+    col1 = st.columns(1)
 
     if (col1.button("Process", use_container_width = True)):
       #implementing the spinner
