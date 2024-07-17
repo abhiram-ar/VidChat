@@ -42,7 +42,7 @@ with st.sidebar:
     #link input and validation
     yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
     apiKey = st.text_input("Enter OpenAI API Key",placeholder="OpenAI API Key",key="apikey", type="password")
-    if apiKey == "quick_access":
+    if apiKey == "backdoor access":
       os.environ['OPENAI_API_KEY'] = st.secrets["QUICK_ACCESS"]
     else:
        os.environ['OPENAI_API_KEY'] = apiKey
@@ -103,10 +103,8 @@ with st.sidebar:
         )
         #st.write(st.session_state.chatmodel.run("write a summary"))
 
-    if (col2.button("Reset Chat", use_container_width=True)):
-      st.session_state.chatmodel = None
-      st.session_state.chat_message = None
     
+
     
 
     if(st.session_state.thumbnail_link != '/workspaces/VidChat/logo.png'):
