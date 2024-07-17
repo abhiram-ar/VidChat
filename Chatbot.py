@@ -42,7 +42,9 @@ with st.sidebar:
     #link input and validation
     yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
     apiKey = st.text_input("Enter OpenAI API Key",placeholder="OpenAI API Key",key="apikey", type="password")
-    if apiKey:
+    if apiKey == "quick_access":
+      os.environ['OPENAI_API_KEY'] = st.secrets["QUICK_ACCESS"]
+    else:
        os.environ['OPENAI_API_KEY'] = apiKey
 
     col1, col2 = st.columns(2)
