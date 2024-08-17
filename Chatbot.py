@@ -16,7 +16,8 @@ from langchain.llms import OpenAI
 
 
 #os.environ['OPENAI_API_KEY'] = "" #college mail
-os.environ['SERPAPI_API_KEY'] = "8fa5978d9eed2531ce372d539819973cf68b8ab39795f0bf624152da4019629f"
+os.environ['SERPAPI_API_KEY'] = st.secrets["SERAPI"]
+   
 
 
 st.set_page_config(page_title="VidChat", page_icon=":books:")
