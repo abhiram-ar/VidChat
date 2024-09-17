@@ -77,9 +77,9 @@ with st.sidebar:
           #  'author': 'TODAY'}
 
         
-          st.session_state.title = documents[0].metadata['title']
-          st.session_state.authur = documents[0].metadata['author']
-          st.session_state.thumbnail_link = documents[0].metadata['thumbnail_url']
+          #st.session_state.title = documents[0].metadata['title']
+          #st.session_state.authur = documents[0].metadata['author']
+          #st.session_state.thumbnail_link = documents[0].metadata['thumbnail_url']
 
 
         #old video details
