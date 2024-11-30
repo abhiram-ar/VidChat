@@ -62,7 +62,7 @@ with st.sidebar:
         #create the txt doc
         if(True):
           url = yt_link
-          loader = YoutubeLoader.from_youtube_url(url, add_video_info = True)
+          loader = YoutubeLoader.from_youtube_url(url, add_video_info = False)
           documents = loader.load()
           transcript = " ".join([doc.page_content for doc in documents])
           
@@ -76,7 +76,7 @@ with st.sidebar:
           #  'length': 1374, 
           #  'author': 'TODAY'}
 
-        
+         
           st.session_state.title = documents[0].metadata['title']
           st.session_state.authur = documents[0].metadata['author']
           st.session_state.thumbnail_link = documents[0].metadata['thumbnail_url']
