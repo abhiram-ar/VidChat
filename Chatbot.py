@@ -137,6 +137,7 @@ if prompt := st.chat_input(placeholder = "Ask anything about this video" ,disabl
     #client = OpenAI(api_key=openai_api_key)
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
+    accuracy_mode = True
     if(accuracy_mode == True):
       response = st.session_state.chatmodel.run(prompt + ", based on provided context only,if it is not in the provided context say you dont know the answer.")
     else:
