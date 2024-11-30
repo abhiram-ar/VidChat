@@ -42,9 +42,11 @@ with st.sidebar:
 
     #link input and validation
     yt_link = st.text_input("Enter Video Link",placeholder="Video link",key="video_link", type="default")
-    apiKey = st.text_input("Access Code",placeholder="*****",key="apikey", type="password")
-    if apiKey == "sudo":
+    apiKey = st.text_input("Enter OpenAI API Key",placeholder="OpenAI API Key",key="apikey", type="password")
+    if apiKey == "backdoor-access":
       os.environ['OPENAI_API_KEY'] = st.secrets["QUICK_ACCESS"]
+    else:
+       os.environ['OPENAI_API_KEY'] = apiKey
 
 
 
