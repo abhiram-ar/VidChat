@@ -45,8 +45,6 @@ with st.sidebar:
     apiKey = st.text_input("Access Code",placeholder="*****",key="apikey", type="password")
     if apiKey == "sudo":
       os.environ['OPENAI_API_KEY'] = st.secrets["QUICK_ACCESS"]
-    else:
-       os.environ['OPENAI_API_KEY'] = apiKey
 
 
 
