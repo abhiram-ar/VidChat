@@ -76,11 +76,12 @@ with st.sidebar:
           #  'length': 1374, 
           #  'author': 'TODAY'}
 
-         
-          st.session_state.title = documents[0].metadata['title']
-          st.session_state.authur = documents[0].metadata['author']
-          st.session_state.thumbnail_link = documents[0].metadata['thumbnail_url']
-
+         try:
+            st.session_state.title = documents[0].metadata['title']
+            st.session_state.authur = documents[0].metadata['author']
+            st.session_state.thumbnail_link = documents[0].metadata['thumbnail_url']
+         except:
+            print("error loading video metadata")
 
         #old video details
         #st.image('https://i.ytimg.com/vi/fhgPzcJbyls/hq720.jpg')
